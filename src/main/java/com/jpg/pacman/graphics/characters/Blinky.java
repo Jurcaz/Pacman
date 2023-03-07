@@ -178,7 +178,7 @@ public class Blinky extends Ghost {
 		this.aux = 0;
 	}
 	
-	//Diferentes metodos con y si necesiidad de parametros para saber si el movimiento es valido
+	//Diferentes metodos con y sin necesiidad de parametros para saber si el movimiento es valido
 	private boolean moveAllowed(float pXact, float pYact) {
 		if((pXact>=0 && pXact<this.getMapa().TAM_MAPA) && (pYact>=0 && pYact<this.getMapa().TAM_MAPA) &&
 				((this.getMapa().getMap()[(int)pYact][(int)pXact]==MapElementEnum.PILL) ||
