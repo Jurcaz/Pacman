@@ -73,7 +73,7 @@ public class Pinky extends Ghost {
 			case LEFT:
 				xact -=1;
 				break;
-			case RIGTH:
+			case RIGHT:
 				xact += 1;
 				break;
 		}
@@ -95,7 +95,7 @@ public class Pinky extends Ghost {
 				this.currentDirection = DirectionEnum.LEFT;
 				break;
 			case 1:
-				this.currentDirection = DirectionEnum.RIGTH;
+				this.currentDirection = DirectionEnum.RIGHT;
 				break;
 			case 2:
 				this.currentDirection = DirectionEnum.DOWN;

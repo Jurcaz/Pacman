@@ -61,7 +61,7 @@ public class Pacman extends Character{
 
 
 	public void keyPressed(KeyEvent e) {
-		logger.debug("keyPressed direccion actual "+currentDirection.toString());
+		//logger.debug("keyPressed direccion actual "+currentDirection.toString());
 		int key = e.getKeyCode();
 		NumberFormat numberFormatDOWN = NumberFormat.getInstance();
 		numberFormatDOWN.setMaximumFractionDigits(0);
@@ -71,7 +71,7 @@ public class Pacman extends Character{
 		numberFormatUP.setRoundingMode(RoundingMode.UP);
 
 		//cambio de eje
-		if ((this.currentDirection== DirectionEnum.LEFT || this.currentDirection== DirectionEnum.RIGTH) && (key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN)) {
+		if ((this.currentDirection== DirectionEnum.LEFT || this.currentDirection== DirectionEnum.RIGHT) && (key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN)) {
 			//la nueva posicion de x debe ser entero
 			float nuevaPos;
 			if (key == KeyEvent.VK_UP) nuevaPos= x-inc;
@@ -84,7 +84,7 @@ public class Pacman extends Character{
 			setImg(this.currentDirection);
 		}
 		if (key == KeyEvent.VK_RIGHT && puedeDesplazarse (x+inc,y)) {
-			this.currentDirection = DirectionEnum.RIGTH;
+			this.currentDirection = DirectionEnum.RIGHT;
 			setImg(this.currentDirection);
 		}
 		if (key == KeyEvent.VK_UP && puedeDesplazarse (x,y-inc)) {
@@ -95,7 +95,7 @@ public class Pacman extends Character{
 			this.currentDirection = DirectionEnum.DOWN;
 			setImg(this.currentDirection);
 		}
-		logger.debug("keyPressed direccion nueva "+currentDirection.toString());
+		//logger.debug("keyPressed direccion nueva "+currentDirection.toString());
 	}
 
 
@@ -133,7 +133,7 @@ public class Pacman extends Character{
 
 	//Método para establecer el icono del personaje
 	private void setImg(DirectionEnum direccion) {
-		logger.debug("segImg - direcion"+ direccion.toString()+" boca cerrada "+imgBocaCerrada);
+		//logger.debug("segImg - direcion"+ direccion.toString()+" boca cerrada "+imgBocaCerrada);
 		switch (direccion)		{
 			case LEFT: {
 				if (!imgBocaCerrada) {
@@ -158,7 +158,7 @@ public class Pacman extends Character{
 				}
 				break;
 			}
-			case RIGTH: {
+			case RIGHT: {
 				if (!imgBocaCerrada) {
 					imagen = this.imagenR;
 					this.imgBocaCerrada = true;
@@ -186,7 +186,7 @@ public class Pacman extends Character{
 				this.imgBocaCerrada = false;
 			}
 		}
-		logger.debug("segImg - direcion"+ direccion.toString()+" boca cerrada "+imgBocaCerrada);
+		//logger.debug("segImg - direcion"+ direccion.toString()+" boca cerrada "+imgBocaCerrada);
 	}
 
 	public void muevePacman () {
@@ -211,7 +211,7 @@ public class Pacman extends Character{
 						this.x = x -inc;
 					}
 					break;
-				case RIGTH:
+				case RIGHT:
 					if (puedeDesplazarse (x+inc, y)) {
 						setImg(this.currentDirection);
 						this.x = x + inc;
@@ -240,15 +240,15 @@ public class Pacman extends Character{
 	 * Comprueba si puede moverse a la posicion x,y
 	 * */
 	private boolean puedeDesplazarse (float x, float y) {
-		logger.debug("Puede desplazarse");
+		//logger.debug("Puede desplazarse");
 		if (x>=0 && y>=0 && y<this.getMapa().getMap().length && x<this.getMapa().getMap()[0].length &&
 				this.getMapa().getMap()[(int)y][(int)x] != MapElementEnum.WALL &&
 				this.getMapa().getMap()[(int)y][(int)x] != MapElementEnum.GHOSTGATE) {
-			logger.debug ("Contenido del mapa en (x ="+(int)x+",y="+(int)y+") "+this.getMapa().getMap()[(int)x][(int)y].toString());
-			logger.debug("Puede desplazarse a "+x+" "+y);
+			//logger.debug ("Contenido del mapa en (x ="+(int)x+",y="+(int)y+") "+this.getMapa().getMap()[(int)x][(int)y].toString());
+			//logger.debug("Puede desplazarse a "+x+" "+y);
 			return true;
 		}
-		logger.debug("No puede desplazarse a "+x+" "+y);
+		//logger.debug("No puede desplazarse a "+x+" "+y);
 		return false;
 	}
 	@Override

@@ -235,7 +235,7 @@ public class GameBoard extends JPanel implements ActionListener {
 	@Override
 	public void paint(Graphics g) {
 		super.paint(g);
-		logger.info("En el método paint");
+		//logger.info("En el método paint");
 		Graphics2D g2d = (Graphics2D) g; // LO CONVERTIMOS EN TIPO 2D.
 		Toolkit.getDefaultToolkit().sync(); // MÉTODO PARA SINCRONIZAR.
 
@@ -252,7 +252,7 @@ public class GameBoard extends JPanel implements ActionListener {
 			ex.printStackTrace();
 		}
 
-		logger.debug ("paint - posicion pacman (x,y) ("+pacman.getX()+","+pacman.getY()+")");
+		//logger.debug ("paint - posicion pacman (x,y) ("+pacman.getX()+","+pacman.getY()+")");
 
 		//comprobar si pacman ha muerto o blinky mueren
 		if ((int)pacman.getX()==(int)blinky.getX() && (int)pacman.getY()==(int)blinky.getY()) {
@@ -511,7 +511,7 @@ public class GameBoard extends JPanel implements ActionListener {
 			for (int columna = 0; columna < mapa.length; columna++) {
 				for (int fila = 0; fila < mapa.length - 1; fila++) {
 					if (mapa[columna][fila] instanceof Ball || mapa[columna][fila] instanceof ExtraBall) {
-						logger.debug("NIVELACABADO: Bola encontrada en "+fila+" "+columna);
+						//logger.debug("NIVELACABADO: Bola encontrada en "+fila+" "+columna);
 						return false;
 					}
 				}

@@ -62,7 +62,7 @@ public abstract class Ghost extends Character implements Runnable {
 				case UP: 	imgName += "_U"; break;
 				case DOWN: 	imgName += "_D"; break;
 				case LEFT: 	imgName += "_L"; break;
-				case RIGTH:	imgName += "_R"; break;
+				case RIGHT:	imgName += "_R"; break;
 			}
 			ii = new ImageIcon(this.getClass().getResource("/img/chars/"+imgName+".png"));
 		}
