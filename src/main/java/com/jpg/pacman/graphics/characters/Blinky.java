@@ -71,9 +71,7 @@ public class Blinky extends Ghost {
 	@Override
 	protected void mover() {
 		System.out.println("\nWEBOSSSSSSSSSSSSS\n");
-		//se mueve a la siguiente posición en la misma dirección si está libre y si no gira
-		DirectionEnum expectedDirection = null;
-		
+		//se mueve a la siguiente posición en la misma dirección si está libre y si no gira		
 		int ghostX = (int) this.getX();
 		int ghostY = (int) this.getY();
 
@@ -82,92 +80,60 @@ public class Blinky extends Ghost {
 
 		int x = (int) Math.abs(ghostY-pacY);
 		int y = (int) Math.abs(ghostX-pacX);
-
-//		switch (this.currentDirection) {
-//			case UP:
-//				ghostY -=1;
-//				break;
-//			case DOWN:
-//				ghostY +=1;
-//				break;
-//			case LEFT:
-//				ghostX -=1;
-//				break;
-//			case RIGHT:
-//				ghostX += 1;
-//				break;
+		
+//		if(!expectedDirectionAllowed()) {
+//			if(currentDirectionAllowed()) go(this.currentDirection);
+//		} else {
+//			checkBetterDirection(ghostY, ghostX, pacY, pacX, x, y);
 //		}
+		
+		checkBetterDirection(ghostY, ghostX, pacY, pacX, x, y);
+		if(currentDirectionAllowed()) go(currentDirection);
+		 
+		logger.debug("Blinky: x " + ghostX + " y " + ghostY +" | "+"Pacman: x " + pacX + " y " + pacY + " | " + "Diferencia: x " + x + " y " + y);
+	}
 	
-		if(y == 0 || x == 0) {
-			if(y == 0) {
-				if(ghostY > pacY){
-					if(moveUpAllowed()) {go(DirectionEnum.UP);}
+	private void ajustBetterDirection() {
+		
+	}
+	
+	private void checkBetterDirection(int pGhostY, int pGhostX, int pPacY, int pPacX, int pX, int pY) {
+		if(pY == 0 || pX == 0) {
+			if(pY == 0) {
+				if(pGhostY > pPacY){
+					if(moveUpAllowed()) {this.currentDirection = DirectionEnum.UP;}
 				} else {
-					if(moveDownAllowed()) {go(DirectionEnum.DOWN);}
+					if(moveDownAllowed()) {this.currentDirection = DirectionEnum.DOWN;}
 				}
 			}
 			
-			if(x == 0) {
-				if(ghostX > pacX){
-					if(moveLeftAllowed()) {go(DirectionEnum.LEFT);}
+			if(pX == 0) {
+				if(pGhostX > pPacX){
+					if(moveLeftAllowed()) {this.currentDirection = DirectionEnum.LEFT;}
 				} else {
-					if(moveRightAllowed()) {go(DirectionEnum.RIGHT);}
-					System.out.println("\nPERAS\n");
+					if(moveRightAllowed()) {this.currentDirection = DirectionEnum.RIGHT;}
 				}
 			}
 			
 		} else {
 			//movemos en y
-			if(x < y && (moveUpAllowed() || moveDownAllowed())) {
-				if(ghostY > pacY) {
-					if(moveUpAllowed()) {go(DirectionEnum.UP);} else {go(DirectionEnum.DOWN);}
+			if(pX < pY) {
+				if(pGhostY > pPacY && moveUpAllowed()) {
+					if(moveUpAllowed()) {this.currentDirection = DirectionEnum.UP;}
+				} else if (pGhostY < pPacY && moveDownAllowed()) {
+					if(moveDownAllowed()) {this.currentDirection = DirectionEnum.DOWN;}
 				}
+					
 			//movemos en x
-			} else if (x > y && (moveLeftAllowed() || moveRightAllowed())) {
-				if(ghostX > pacX) {
-					if(moveLeftAllowed()) {go(DirectionEnum.LEFT);} else {go(DirectionEnum.RIGHT);}
+			} else if (pX > pY) {
+				if(pGhostX > pPacX && moveLeftAllowed()) {
+					if(moveLeftAllowed()) {this.currentDirection = DirectionEnum.LEFT;}
+				} else if(pGhostX < pPacX && moveRightAllowed()) {
+					if(moveRightAllowed()) {this.currentDirection = DirectionEnum.RIGHT;}
 				}
 			}
 		}
-		
-		//comprueba si la nueva posición está dentro de los límites y es un hueco
-		//para seguir con la direccion asignada
-//		if (moveAllowed(ghostX, ghostY)) {
-//			this.setX(ghostX);
-//			this.setY(ghostY);
-//			
-//			
-//		} else {
-//			
-//		}
-		
-		
-		
-		
-		
-		
-		
-		
-		/*
-		if(moveUpAllowed() || moveDownAllowed()) {
-			if(ghostY > pacY) {
-				
-			} else {
-				if(moveDownAllowed()) {bestY = DirectionEnum.DOWN;} else {bestY = DirectionEnum.UP;}
-			}
-		}
-		
-		if(moveRightAllowed() || moveLeftAllowed()) {
-			if(ghostX > pacX) {
-				if(moveLeftAllowed()) {bestX = DirectionEnum.LEFT;} else {bestX = DirectionEnum.RIGTH;}
-			} else {
-				if(moveRightAllowed()) {bestX = DirectionEnum.RIGTH;} else {bestY = DirectionEnum.LEFT;}
-			}
-		}
-		*/
-		
-		
-		logger.debug("Pinky: x " + this.x + " y " + this.y);
+		System.out.println("blinky better direction " + this.currentDirection);
 	}
 	
 	private void go(DirectionEnum pDirection) {
@@ -177,19 +143,19 @@ public class Blinky extends Ghost {
 		switch (pDirection) {
 		case UP:
 			Yaux -=1;
-			this.currentDirection=DirectionEnum.UP;
+			//this.currentDirection=DirectionEnum.UP;
 			break;
 		case DOWN:
 			Yaux +=1;
-			this.currentDirection=DirectionEnum.DOWN;
+			//this.currentDirection=DirectionEnum.DOWN;
 			break;
 		case LEFT:
 			Xaux -=1;
-			this.currentDirection=DirectionEnum.LEFT;
+			//this.currentDirection=DirectionEnum.LEFT;
 			break;
 		case RIGHT:
 			Xaux += 1;
-			this.currentDirection=DirectionEnum.RIGHT;
+			//this.currentDirection=DirectionEnum.RIGHT;
 			break;
 	}
 		this.setX(Xaux);
@@ -283,6 +249,36 @@ public class Blinky extends Ghost {
 				 (this.getMapa().getMap()[(int)(this.y)][(int)(this.x+1)]==MapElementEnum.EMPTY)))
 			return true;
 		else {
+			return false;
+		}
+	}
+	
+	private boolean currentDirectionAllowed() {
+		switch (this.currentDirection) {
+		case UP:
+			return moveUpAllowed();
+		case RIGHT:
+			return moveRightAllowed();
+		case DOWN:
+			return moveDownAllowed();
+		case LEFT:
+			return moveLeftAllowed();
+		default:
+			return false;
+		}
+	}
+	
+	private boolean expectedDirectionAllowed() {
+		switch (this.expectedDirection) {
+		case UP:
+			return moveUpAllowed();
+		case RIGHT:
+			return moveRightAllowed();
+		case DOWN:
+			return moveDownAllowed();
+		case LEFT:
+			return moveLeftAllowed();
+		default:
 			return false;
 		}
 	}

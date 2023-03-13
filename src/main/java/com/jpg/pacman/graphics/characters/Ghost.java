@@ -12,6 +12,7 @@ public abstract class Ghost extends Character implements Runnable {
 	protected int velocidad;
 	protected GameBoard gameboard;
 	protected boolean outCage = false;
+	protected DirectionEnum expectedDirection = null;
 
 	public Ghost(GameBoard gameBoard) {
 		super(gameBoard);
