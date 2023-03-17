@@ -1,5 +1,7 @@
 package com.jpg.pacman.graphics.characters;
 
+import java.util.ArrayList;
+
 import javax.swing.ImageIcon;
 
 import org.apache.logging.log4j.LogManager;
@@ -14,6 +16,8 @@ public class Blinky extends Ghost {
 	private int velocidadFantasma = 500;
 	private DirectionEnum[] wayOut = {DirectionEnum.UP,DirectionEnum.RIGHT,DirectionEnum.UP,DirectionEnum.UP};
 	private int aux = 0;
+	
+	ArrayList<DirectionEnum> wayToPacman = new ArrayList<>();
 	
 	DirectionEnum bestX = null;
 	DirectionEnum bestY = null;
@@ -41,7 +45,16 @@ public class Blinky extends Ghost {
 			}
 
 			if(this.outCage) {
-				mover();
+				//mover();
+				int ghostX = (int) this.getX();
+				int ghostY = (int) this.getY();
+
+				int pacX = (int) this.tablero.getPacman().getX();
+				int pacY = (int) this.tablero.getPacman().getY();
+				
+				System.out.println(findShortestPathLength(this.tablero.getMap(),ghostX,ghostY,pacX,pacY));
+				
+				for(DirectionEnum a :wayToPacman) System.out.println(a);
 			} else {
 				goOutCage();
 			}
@@ -89,12 +102,8 @@ public class Blinky extends Ghost {
 		
 		checkBetterDirection(ghostY, ghostX, pacY, pacX, x, y);
 		if(currentDirectionAllowed()) go(currentDirection);
-		 
-		logger.debug("Blinky: x " + ghostX + " y " + ghostY +" | "+"Pacman: x " + pacX + " y " + pacY + " | " + "Diferencia: x " + x + " y " + y);
-	}
-	
-	private void ajustBetterDirection() {
 		
+		logger.debug("Blinky: x " + ghostX + " y " + ghostY +" | "+"Pacman: x " + pacX + " y " + pacY + " | " + "Diferencia: x " + x + " y " + y);
 	}
 	
 	private void checkBetterDirection(int pGhostY, int pGhostX, int pPacY, int pPacX, int pX, int pY) {
@@ -283,8 +292,120 @@ public class Blinky extends Ghost {
 		}
 	}
 	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	
+	private boolean isSafe(MapElementEnum[][] mat, boolean[][] visited, int x, int y) {
+        return (moveAllowed(x, y) && !visited[x][y]);
+    }
+	
+	public int findShortestPath(MapElementEnum[][] mat, boolean[][] visited, int i, int j, int x, int y, int min_dist, int dist){
+		
+		// si se encuentra el destino, actualice `min_dist`
+		if (i == x && j == y) {
+		
+//			for(DirectionEnum a : threadUp) System.out.println(a);
+			
+//			for(boolean[] path : visited){
+//			for(boolean a: path) {
+//			if(a) { System.out.print("J "); } else { System.out.print("o "); }
+//			}
+//			System.out.println();
+//			}
+//			System.out.println("--------------------");
+			
+			return Integer.min(dist, min_dist);       
+		}
+			
+		// establece (i, j) la celda como visitada
+		visited[i][j] = true;
+		
+		// ir a la celda inferior
+		if (isSafe(mat, visited, i + 1, j))	{
+			min_dist = findShortestPath(mat, visited, i + 1, j, x, y, min_dist, dist + 1);
+			wayToPacman.add(DirectionEnum.DOWN);
+			
+			//System.out.println("down ");
+//			threadUp.add(DirectionEnum.DOWN);
+//			threadDown.add(DirectionEnum.DOWN);
+//			threadRight.add(DirectionEnum.DOWN);
+//			threadDown.add(DirectionEnum.DOWN);
+		}
+		
+		// ir a la celda de la derecha
+			if (isSafe(mat, visited, i, j + 1))	{
+			min_dist = findShortestPath(mat, visited, i, j + 1, x, y, min_dist, dist + 1);
+			wayToPacman.add(DirectionEnum.RIGHT);
+			
+			//System.out.println("right ");
+//			threadUp.add(DirectionEnum.RIGHT);
+//			threadDown.add(DirectionEnum.RIGHT);
+//			threadRight.add(DirectionEnum.RIGHT);
+//			threadDown.add(DirectionEnum.RIGHT);
+		}
+		
+		// ir a la celda superior
+		if (isSafe(mat, visited, i - 1, j))	{
+			min_dist = findShortestPath(mat, visited, i - 1, j, x, y, min_dist, dist + 1);
+			wayToPacman.add(DirectionEnum.UP);
+			
+			//System.out.println("up ");
+//			threadUp.add(DirectionEnum.UP);
+//			threadDown.add(DirectionEnum.UP);
+//			threadRight.add(DirectionEnum.UP);
+//			threadDown.add(DirectionEnum.UP);
+		}
+		
+		// ir a la celda de la izquierda
+		if (isSafe(mat, visited, i, j - 1))	{
+			min_dist = findShortestPath(mat, visited, i, j - 1, x, y, min_dist, dist + 1);
+			wayToPacman.add(DirectionEnum.LEFT);
+			
+			//System.out.println("left ");
+//			threadUp.add(DirectionEnum.LEFT);
+//			threadDown.add(DirectionEnum.LEFT);
+//			threadRight.add(DirectionEnum.LEFT);
+//			threadDown.add(DirectionEnum.LEFT);
+		}
+		
+		if(wayToPacman.size()>0) wayToPacman.remove(wayToPacman.size()-1);
+		
+//		if(threadUp.size()>0) threadUp.remove(threadUp.size()-1);
+//		if(threadDown.size()>0) threadDown.remove(threadDown.size()-1);
+//		if(threadRight.size()>0) threadRight.remove(threadRight.size()-1);
+//		if(threadLeft.size()>0) threadLeft.remove(threadLeft.size()-1);
+		
+		// retroceder: eliminar (i, j) de la matriz visitada
+		visited[i][j] = false;
+		
+		return min_dist;
+	}
 
+	// Envoltura sobre la función findShortestPath()
+	public int findShortestPathLength(MapElementEnum[][] mat, int i, int j, int x, int y) {
+	// caso base: entrada inválida
+//	if (mat == null || mat.length == 0 || mat[i][j] == 0 || mat[x][y] == 0) {
+//		return -1;
+//	}
+	
+	// matriz `M × N`
+	int M = mat.length;
+	int N = mat[0].length;
+	
+	int min_dist;
+	
+	// construye una matriz `M × N` para realizar un seguimiento de las celdas visitadas
+	boolean[][] visited = new boolean[M][N];
+	
+	min_dist = findShortestPath(mat, visited, i, j, x, y, Integer.MAX_VALUE, 0);
+	
+	if (min_dist != Integer.MAX_VALUE) {
+		return min_dist;
+	}
+		return -1;
+	}
+	
+	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
 }
 
 //	@Override
