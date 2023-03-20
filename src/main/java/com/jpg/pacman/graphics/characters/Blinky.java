@@ -183,7 +183,6 @@ public class Blinky extends Ghost {
 			(result == down  && result == (up|right|left))		|| 
 			(result == right && result == (up|down|left))		|| 
 			(result == left  && result == (up|down|right)) ) {
-			System.out.println("hafkjhsadfgasdfjashdfajshfbakjhfaskjh\n\n\n\n\n\n");
 			if(moveUpAllowed()) {
 				this.currentDirection = DirectionEnum.UP;
 			} else if(moveLeftAllowed()) {
