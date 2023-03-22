@@ -1,7 +1,6 @@
 package com.jpg.pacman.graphics.characters;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import javax.swing.ImageIcon;
 
@@ -17,13 +16,11 @@ public class Blinky extends Ghost {
 	private int velocidadFantasma = 500;
 	private DirectionEnum[] wayOut = {DirectionEnum.UP,DirectionEnum.RIGHT,DirectionEnum.UP,DirectionEnum.UP};
 	private int aux = 0;
-	private boolean[][] solution = new boolean[this.tablero.TAM_MAPA][this.tablero.TAM_MAPA];
-	
-	ArrayList<DirectionEnum> wayToPacman = new ArrayList<>();
-	
+	boolean[][] visited = new boolean[this.getMapa().TAM_MAPA][this.getMapa().TAM_MAPA];
+
 	DirectionEnum bestX = null;
 	DirectionEnum bestY = null;
-	
+
 	boolean up, down, right, left;
 
 	private final static Logger logger = LogManager.getLogger (Blinky.class);
@@ -50,23 +47,24 @@ public class Blinky extends Ghost {
 
 			if(this.outCage) {
 				checkBetterDirection();
-				mover();
+//				mover();
+				System.out.println("interrsection " + isIntersection());
 //				int ghostX = (int) this.getX();
 //				int ghostY = (int) this.getY();
 
 //				int pacX = (int) this.tablero.getPacman().getX();
 //				int pacY = (int) this.tablero.getPacman().getY();
-				
+
 //				System.out.println(findShortestPathLength(this.tablero.getMap(),ghostX,ghostY,pacX,pacY));
-				
-//				for(boolean[] path : solution){
+
+//				for(boolean[] path : visited){
 //		            for(boolean a: path) {
 //		                if(a) { System.out.print("a "); } else { System.out.print("o "); }
 //		            }
 //		            System.out.println();
 //		        }
 //				System.out.println("---------------------------------------------------------");
-//				
+
 //				if(up) {
 //					go(DirectionEnum.UP);
 //				} else if (down) {
@@ -76,32 +74,32 @@ public class Blinky extends Ghost {
 //				} else if (left) {
 //					go(DirectionEnum.LEFT);
 //				}
-				
+
 //				System.out.println("Up " + up + " Right " + right + " Down " + down + " Left " + left);
-//				
+
 //				up=false;
 //				down=false;
 //				right=false;
 //				left=false;
-							
+
 //				System.out.println(solution[ghostX-1][ghostY-1] +""+ solution[ghostX][ghostY-1] +""+ solution[ghostX+1][ghostY-1]);
 //				System.out.println(solution[ghostX-1][ghostY] +""+ solution[ghostX][ghostY] +""+ solution[ghostX+1][ghostY]);
 //				System.out.println(solution[ghostX-1][ghostY+1] +""+ solution[ghostX][ghostY+1] +""+ solution[ghostX+1][ghostY+1]);
-				
+
 			} else {
 				goOutCage();
 			}
 
-			System.out.println(" -------------------------Fin--------------------------- ");
 			
-			
+
+
 //			System.out.println("Movimientos validos: Up - " + moveUpAllowed() + " ,Down - " + moveDownAllowed() + " ,Right - " + moveRightAllowed() + " ,Left - " + moveLeftAllowed() );
 //			go(DirectionEnum.UP);
 //			lastDirection = currentDirection;
+			System.out.println(" -------------------------Fin--------------------------- ");
 		}
 
 	}
-
 
 	public Blinky (GameBoard mapa) {
 		super (mapa);
@@ -120,7 +118,7 @@ public class Blinky extends Ghost {
 	@Override
 	protected void mover() {
 		if(currentDirectionAllowed()) go(currentDirection);
-		
+
 		if(this.currentDirection == DirectionEnum.UP) {
 			this.lastDirection = DirectionEnum.DOWN;
 		} else if(this.currentDirection == DirectionEnum.DOWN) {
@@ -130,58 +128,58 @@ public class Blinky extends Ghost {
 		} else if(this.currentDirection == DirectionEnum.LEFT) {
 			this.lastDirection = DirectionEnum.RIGHT;
 		}
-		
+
 		logger.debug("Blinky: x " + this.x + " y " + this.y +" | "+"Pacman: x " + this.tablero.getPacman().getX() + " y " + this.tablero.getPacman().getY());
 	}
-	
+
 	private void checkBetterDirection() {
-		
+
 		int up, down, right, left;
-		
+
 		int pacX = (int) this.tablero.getPacman().getX();
 		int pacY = (int) this.tablero.getPacman().getY();
-		
-		if(moveUpAllowed() && (this.lastDirection != DirectionEnum.UP)) {
+
+		if(moveUpAllowed() && ((this.lastDirection != DirectionEnum.UP) || isIntersection()) ) {
 			int ghostX = (int) this.x;
 			int ghostY = (int) this.y-1;
-			
+
 			up = Math.abs((pacX-ghostX))+Math.abs((pacY-ghostY));
 		} else {
 			up = Integer.MAX_VALUE;
 		}
-		
-		if(moveDownAllowed() && (this.lastDirection != DirectionEnum.DOWN)) {
+
+		if(moveDownAllowed() && ((this.lastDirection != DirectionEnum.DOWN) || isIntersection()) ) {
 			int ghostX = (int) this.x;
 			int ghostY = (int) this.y+1;
-			
+
 			down = Math.abs((pacX-ghostX))+Math.abs((pacY-ghostY));
 		} else {
 			down = Integer.MAX_VALUE;
 		}
-		
-		if(moveRightAllowed() && (this.lastDirection != DirectionEnum.RIGHT)) {
+
+		if(moveRightAllowed() && ((this.lastDirection != DirectionEnum.RIGHT) || isIntersection() ) ) {
 			int ghostX = (int) this.x+1;
 			int ghostY = (int) this.y;
-			
+
 			right = Math.abs((pacX-ghostX))+Math.abs((pacY-ghostY));
 		} else {
 			right = Integer.MAX_VALUE;
 		}
-		
-		if(moveLeftAllowed() && (this.lastDirection != DirectionEnum.LEFT)) {
+
+		if(moveLeftAllowed() && ((this.lastDirection != DirectionEnum.LEFT) || isIntersection() )) {
 			int ghostX = (int) this.x-1;
 			int ghostY = (int) this.y;
-			
+
 			left = Math.abs((pacX-ghostX))+Math.abs((pacY-ghostY));
 		} else {
 			left = Integer.MAX_VALUE;
 		}
-		
+
 		int result = (Math.min((Math.min(up, down)), (Math.min(right, left))));
-		
-		if( (result == up    && result == (down|right|left))	|| 
-			(result == down  && result == (up|right|left))		|| 
-			(result == right && result == (up|down|left))		|| 
+
+		if( (result == up    && result == (down|right|left))	||
+			(result == down  && result == (up|right|left))		||
+			(result == right && result == (up|down|left))		||
 			(result == left  && result == (up|down|right)) ) {
 			if(moveUpAllowed()) {
 				this.currentDirection = DirectionEnum.UP;
@@ -193,26 +191,33 @@ public class Blinky extends Ghost {
 				this.currentDirection = DirectionEnum.RIGHT;
 			}
 		}
-		
+
 		System.out.println("Up " + up + " Right " + right + " Down " + down + " Left " + left);
-		
+
 		if(result == up) {
-//			go(DirectionEnum.UP);
 			this.currentDirection = DirectionEnum.UP;
 		} else if(result == down) {
-//			go(DirectionEnum.DOWN);
 			this.currentDirection = DirectionEnum.DOWN;
 		} else if(result == right) {
-//			go(DirectionEnum.RIGHT);
 			this.currentDirection = DirectionEnum.RIGHT;
 		} else if(result == left) {
-//			go(DirectionEnum.LEFT);
 			this.currentDirection = DirectionEnum.LEFT;
 		}
-		
+
 	}
 	
-	
+	private boolean isIntersection() {
+		if(((int)this.y) == (1|5|8|10|13|16|18|21|24) )
+		
+		if(moveUpAllowed() 		&& (moveDownAllowed()|moveLeftAllowed()|moveRightAllowed()))	return true;
+		if(moveRightAllowed()	&& (moveUpAllowed()|moveDownAllowed()|moveLeftAllowed()))		return true;
+		if(moveDownAllowed()	&& (moveUpAllowed()|moveRightAllowed()|moveLeftAllowed()))		return true;
+		if(moveLeftAllowed()	&& (moveUpAllowed()|moveRightAllowed()|moveDownAllowed()))		return true;	
+		
+		return false;
+	}
+
+
 	private void checkBetterDirectionOld(int pGhostY, int pGhostX, int pPacY, int pPacX, int pX, int pY) {
 		if(pY == 0 || pX == 0) {
 			if(pY == 0) {
@@ -222,7 +227,7 @@ public class Blinky extends Ghost {
 					if(moveDownAllowed()) {this.currentDirection = DirectionEnum.DOWN;}
 				}
 			}
-			
+
 			if(pX == 0) {
 				if(pGhostX > pPacX){
 					if(moveLeftAllowed()) {this.currentDirection = DirectionEnum.LEFT;}
@@ -230,7 +235,7 @@ public class Blinky extends Ghost {
 					if(moveRightAllowed()) {this.currentDirection = DirectionEnum.RIGHT;}
 				}
 			}
-			
+
 		} else {
 			//movemos en y
 			if(pX < pY) {
@@ -239,7 +244,7 @@ public class Blinky extends Ghost {
 				} else if (pGhostY < pPacY && moveDownAllowed()) {
 					if(moveDownAllowed()) {this.currentDirection = DirectionEnum.DOWN;}
 				}
-					
+
 			//movemos en x
 			} else if (pX > pY) {
 				if(pGhostX > pPacX && moveLeftAllowed()) {
@@ -251,7 +256,7 @@ public class Blinky extends Ghost {
 		}
 		System.out.println("blinky better direction " + this.currentDirection);
 	}
-	
+
 	private void go(DirectionEnum pDirection) {
 		float Yaux = this.y;
 		float Xaux = this.x;
@@ -311,7 +316,7 @@ public class Blinky extends Ghost {
 		this.outCage = false;
 		this.aux = 0;
 	}
-	
+
 	//Diferentes metodos con y sin necesiidad de parametros para saber si el movimiento es valido
 	private boolean moveAllowed(float pXact, float pYact) {
 		if((pXact>=0 && pXact<this.getMapa().TAM_MAPA) && (pYact>=0 && pYact<this.getMapa().TAM_MAPA) &&
@@ -324,7 +329,7 @@ public class Blinky extends Ghost {
 		}
 
 	}
-	
+
 	private boolean moveUpAllowed() {
 		if(((this.x)>=0 && (this.x)<this.getMapa().TAM_MAPA) && ((this.y-1)>=0 && (this.y-1)<this.getMapa().TAM_MAPA) &&
 				((this.getMapa().getMap()[(int)(this.y-1)][(int)(this.x)]==MapElementEnum.PILL) ||
@@ -335,7 +340,7 @@ public class Blinky extends Ghost {
 			return false;
 		}
 	}
-	
+
 	private boolean moveDownAllowed() {
 		if(((this.x)>=0 && (this.x)<this.getMapa().TAM_MAPA) && ((this.y+1)>=0 && (this.y+1)<this.getMapa().TAM_MAPA) &&
 				((this.getMapa().getMap()[(int)(this.y+1)][(int)(this.x)]==MapElementEnum.PILL) ||
@@ -346,7 +351,7 @@ public class Blinky extends Ghost {
 			return false;
 		}
 	}
-	
+
 	private boolean moveLeftAllowed() {
 		if(((this.x-1)>=0 && (this.x-1)<this.getMapa().TAM_MAPA) && ((this.y)>=0 && (this.y)<this.getMapa().TAM_MAPA) &&
 				((this.getMapa().getMap()[(int)(this.y)][(int)(this.x-1)]==MapElementEnum.PILL) ||
@@ -357,7 +362,7 @@ public class Blinky extends Ghost {
 			return false;
 		}
 	}
-	
+
 	private boolean moveRightAllowed() {
 		if(((this.x+1)>=0 && (this.x+1)<this.getMapa().TAM_MAPA) && ((this.y)>=0 && (this.y)<this.getMapa().TAM_MAPA) &&
 				((this.getMapa().getMap()[(int)(this.y)][(int)(this.x+1)]==MapElementEnum.PILL) ||
@@ -368,7 +373,7 @@ public class Blinky extends Ghost {
 			return false;
 		}
 	}
-	
+
 	private boolean currentDirectionAllowed() {
 		switch (this.currentDirection) {
 		case UP:
@@ -383,7 +388,7 @@ public class Blinky extends Ghost {
 			return false;
 		}
 	}
-	
+
 	private boolean expectedDirectionAllowed() {
 		switch (this.expectedDirection) {
 		case UP:
@@ -398,129 +403,127 @@ public class Blinky extends Ghost {
 			return false;
 		}
 	}
-	
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 	class Tool{
 		int distancia;
 		boolean[][] mapa;
-		
+
 		Tool(int dis, boolean[][] map){
 			this.distancia = dis;
 			this.mapa = map;
 		}
 	}
-	
-	private boolean isSafe(boolean[][] visited, int x, int y) {
+
+	private boolean isSafe(int x, int y) {
         return (moveAllowed(x, y) && !visited[x][y]);
     }
-	
-	public int findShortestPath(boolean[][] visited, int i, int j, int x, int y, int min_dist, int dist){
-		
+
+	public int findShortestPath(int i, int j, int x, int y, int min_dist, int dist){
+
 		// si se encuentra el destino, actualice `min_dist`
 		if (i == x && j == y) {
-			
-			int aux = Integer.min(dist, min_dist);
-			
-			left = visited[i-1][j];
-			right = visited[i+1][j];
-			down = visited[i][j+1];
-			up = visited[i][j-1];
-						
+
+			left = visited[i][j-1];
+			right = visited[i][j+1];
+			down = visited[i+1][j];
+			up = visited[i-1][j];
+
 //			System.out.println(solution[i-2][j-2] +" "+ solution[i-1][j-2] +" "+ solution[i][j-2] +" "+ solution[i+1][j-2] +" "+ solution[i+2][j+2]);
 //			System.out.println(solution[i-2][j-1] +" "+ solution[i-1][j-1] +" "+ solution[i][j-1] +" "+ solution[i+1][j-1] +" "+ solution[i+2][j-1]);
 //			System.out.println(solution[i-2][j] +" "+ solution[i-1][j] +" "+ solution[i][j] +" "+ solution[i+1][j] +" "+ solution[i+2][j]);
 //			System.out.println(solution[i-2][j+1] +" "+ solution[i-1][j+1] +" "+ solution[i][j+1] +" "+ solution[i+1][j+1] +" "+ solution[i+2][j+1]);
 //			System.out.println(solution[i-2][j+2] +" "+ solution[i-1][j+2] +" "+ solution[i][j+2] +" "+ solution[i+1][j+2] +" "+ solution[i+2][j+2]);
 //			System.out.println("---------------" + min_dist);
-				
-//			for(int auxI = 0; auxI < visited.length; auxI++) {
-//				for(int auxJ = 0; auxJ < visited[auxJ].length; auxJ++) {
-//					if(visited[auxI][auxJ]) { System.out.print("a "); } else { System.out.print("o "); }
-//				}
-//				System.out.println();
-//			}
-//			System.out.println("---------------------------------------------------------"+min_dist);
-			
+
 //			for(boolean[] path : visited){
 //	            for(boolean a: path) {
-//	                
+//	                if(a) { System.out.print("a "); } else { System.out.print("o "); }
 //	            }
 //	            System.out.println();
 //	        }
 //			System.out.println("---------------------------------------------------------"+min_dist);
-			
+
+//			for(boolean[] path : visited){
+//	            for(boolean a: path) {
+//
+//	            }
+//	            System.out.println();
+//	        }
+//			System.out.println("---------------------------------------------------------"+min_dist);
+
 //			if(visited[i+1][j]) {	down = true;	} else {	down = false; }
 //			if(visited[i][j+1])	{	right = true;	} else {	right = false; }
 //			if(visited[i-1][j]) {	up = true;		} else {	up = false; }
 //			if(visited[i][j-1]) {	left = true;	} else {	left = false; }
-			
+
 //			System.arraycopy(visited, 0, solution, 0, visited.length);
-			
+
 //			solution = Arrays.copyOf(visited, visited.length);
-			
-			return aux; 
+
+			return Integer.min(dist, min_dist);
 		}
-			
+
 		// establece (i, j) la celda como visitada
 		visited[i][j] = true;
-		
-		
+
+
 		// ir a la celda superior
-		if (isSafe(visited, i - 1, j))	{
-			min_dist = findShortestPath(visited, i - 1, j, x, y, min_dist, dist + 1);
+		if (isSafe(i - 1, j))	{
+			min_dist = findShortestPath(i - 1, j, x, y, min_dist, dist + 1);
 //			wayToPacman.add(DirectionEnum.UP);
-				
+
 			//System.out.println("up ");
 //			threadUp.add(DirectionEnum.UP);
 //			threadDown.add(DirectionEnum.UP);
 //			threadRight.add(DirectionEnum.UP);
 //			threadDown.add(DirectionEnum.UP);
 		}
-				
+
 		// ir a la celda inferior
-		if (isSafe(visited, i + 1, j))	{
-			min_dist = findShortestPath(visited ,i + 1, j, x, y, min_dist, dist + 1);
+		if (isSafe(i + 1, j))	{
+			min_dist = findShortestPath(i + 1, j, x, y, min_dist, dist + 1);
 //			wayToPacman.add(DirectionEnum.DOWN);
-			
+
 			//System.out.println("down ");
 //			threadUp.add(DirectionEnum.DOWN);
 //			threadDown.add(DirectionEnum.DOWN);
 //			threadRight.add(DirectionEnum.DOWN);
 //			threadDown.add(DirectionEnum.DOWN);
 		}
-		
+
 		// ir a la celda de la derecha
-		if (isSafe(visited, i, j + 1))	{
-			min_dist = findShortestPath(visited, i, j + 1, x, y, min_dist, dist + 1);
+		if (isSafe(i, j + 1))	{
+			min_dist = findShortestPath(i, j + 1, x, y, min_dist, dist + 1);
 //			wayToPacman.add(DirectionEnum.RIGHT);
-					
+
 			//System.out.println("right ");
 //			threadUp.add(DirectionEnum.RIGHT);
 //			threadDown.add(DirectionEnum.RIGHT);
 //			threadRight.add(DirectionEnum.RIGHT);
 //			threadDown.add(DirectionEnum.RIGHT);
 		}
-					
+
 		// ir a la celda de la izquierda
-		if (isSafe(visited, i, j - 1))	{
-			min_dist = findShortestPath(visited, i, j - 1, x, y, min_dist, dist + 1);
+		if (isSafe(i, j - 1))	{
+			min_dist = findShortestPath(i, j - 1, x, y, min_dist, dist + 1);
 //			wayToPacman.add(DirectionEnum.LEFT);
-					
+
 			//System.out.println("left ");
 //			threadUp.add(DirectionEnum.LEFT);
 //			threadDown.add(DirectionEnum.LEFT);
 //			threadRight.add(DirectionEnum.LEFT);
 //			threadDown.add(DirectionEnum.LEFT);
-		}		
-		
+		}
+
 //		if(wayToPacman.size()>0) wayToPacman.remove(wayToPacman.size()-1);
-		
+
 //		if(threadUp.size()>0) threadUp.remove(threadUp.size()-1);
 //		if(threadDown.size()>0) threadDown.remove(threadDown.size()-1);
 //		if(threadRight.size()>0) threadRight.remove(threadRight.size()-1);
 //		if(threadLeft.size()>0) threadLeft.remove(threadLeft.size()-1);
-		
+
 		// retroceder: eliminar (i, j) de la matriz visitada
 		visited[i][j] = false;
 //		solution[i][j] = false;
@@ -528,7 +531,7 @@ public class Blinky extends Ghost {
 //		down=false;
 //		right=false;
 //		left=false;
-		
+
 		return min_dist;
 	}
 
@@ -538,17 +541,18 @@ public class Blinky extends Ghost {
 //	if (mat == null || mat.length == 0 || mat[i][j] == 0 || mat[x][y] == 0) {
 //		return -1;
 //	}
-	
-	int M = mat.length;
-	int N = mat[0].length;
-	
+
+//	int M = mat.length;
+//	int N = mat[0].length;
+
 	int min_dist;
-	
+
 	// construye una matriz `M × N` para realizar un seguimiento de las celdas visitadas
-	boolean[][] visited = new boolean[M][N];
-	
-	min_dist = findShortestPath(visited, i, j, x, y, Integer.MAX_VALUE, 0);
-	
+//	boolean[][] visited = new boolean[M][N];
+
+
+	min_dist = findShortestPath(i, j, x, y, Integer.MAX_VALUE, 0);
+
 //	for(boolean[] path : visited){
 //        for(boolean a: path) {
 //            if(a) { System.out.print("a "); } else { System.out.print("o "); }
@@ -556,15 +560,15 @@ public class Blinky extends Ghost {
 //        System.out.println();
 //    }
 //	System.out.println("--------------------");
-	
+
 	if (min_dist != Integer.MAX_VALUE) {
 		return min_dist;
 	}
 		return -1;
 	}
-	
+
 	////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
+
 }
 
 //	@Override
@@ -616,3 +620,76 @@ public class Blinky extends Ghost {
 //		}
 //		}
 //	}
+
+/*
+1,1
+6,1
+12,1
+15,1
+21,1
+26,1
+
+1,5
+6,5
+12,5
+15,5
+21,5
+26,5
+
+1,8
+6,8
+9,8
+12,8
+15,8
+18,8
+21,8
+26,8
+
+10,10
+13,10
+16,10
+18,10
+
+6,13
+9,13
+18,13
+21,13
+
+9,16
+18,16
+
+1,18
+6,18
+12,18
+15,18
+18,18
+21,18
+26,18
+
+1,21
+3,21
+6,21
+9,21
+12,21
+15,21
+18,21
+21,21
+24,21
+26,21
+
+1,24
+3,24
+6,24
+9,24
+12,24
+15,24
+18,24
+21,24
+24,24
+26,24
+
+1,27
+12,27
+15,27
+26,27
+*/

@@ -508,9 +508,9 @@ public class GameBoard extends JPanel implements ActionListener {
 			this.reiniciarPosiciones = reiniciarPosiciones;
 		}
 		public boolean nivelAcabado () {
-			for (int columna = 0; columna < mapa.length; columna++) {
+			for (Element[] element : mapa) {
 				for (int fila = 0; fila < mapa.length - 1; fila++) {
-					if (mapa[columna][fila] instanceof Ball || mapa[columna][fila] instanceof ExtraBall) {
+					if (element[fila] instanceof Ball || element[fila] instanceof ExtraBall) {
 						//logger.debug("NIVELACABADO: Bola encontrada en "+fila+" "+columna);
 						return false;
 					}
