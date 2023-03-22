@@ -1,6 +1,7 @@
 package com.jpg.pacman.graphics.characters;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.ImageIcon;
 
@@ -17,6 +18,7 @@ public class Blinky extends Ghost {
 	private DirectionEnum[] wayOut = {DirectionEnum.UP,DirectionEnum.RIGHT,DirectionEnum.UP,DirectionEnum.UP};
 	private int aux = 0;
 	boolean[][] visited = new boolean[this.getMapa().TAM_MAPA][this.getMapa().TAM_MAPA];
+	boolean[][] mejorCamino = new boolean[this.getMapa().TAM_MAPA][this.getMapa().TAM_MAPA];
 
 	DirectionEnum bestX = null;
 	DirectionEnum bestY = null;
@@ -46,17 +48,40 @@ public class Blinky extends Ghost {
 			}
 
 			if(this.outCage) {
-				checkBetterDirection();
+//				checkBetterDirection();
 //				mover();
-				System.out.println("interrsection " + isIntersection());
-//				int ghostX = (int) this.getX();
-//				int ghostY = (int) this.getY();
+//				System.out.println("interrsection " + isIntersection());
+				int ghostX = (int) this.getX();
+				int ghostY = (int) this.getY();
 
-//				int pacX = (int) this.tablero.getPacman().getX();
-//				int pacY = (int) this.tablero.getPacman().getY();
+				int pacX = (int) this.tablero.getPacman().getX();
+				int pacY = (int) this.tablero.getPacman().getY();
 
-//				System.out.println(findShortestPathLength(this.tablero.getMap(),ghostX,ghostY,pacX,pacY));
+				
+				
 
+	
+				System.out.println(findShortestPathLength(this.tablero.getMap(),ghostX,ghostY,pacX,pacY));
+				
+				for (int i=0;i<mejorCamino.length;i++) {
+					for (int j=0; j<mejorCamino.length; j++) {
+						if (mejorCamino[i][j]) System.out.print("V ");
+						else System.out.print("F ");
+	
+						mejorCamino[i][j]=false;
+					}
+					System.out.println("");
+				}
+				
+				System.out.println("Posicion "+ghostX+" "+ghostY);
+				
+				if (ghostX-1>0 && mejorCamino[ghostY][ghostX-1]) ghostX = ghostX-1;
+				if (ghostY-1>0 && mejorCamino[ghostY-1][ghostX]) ghostY = ghostY-1;
+				if (ghostX+1<mejorCamino.length && mejorCamino[ghostY][ghostX+1]) ghostX = ghostX+1;
+				if (ghostY+1<mejorCamino.length && mejorCamino[ghostY+1][ghostX]) ghostY = ghostY+1;
+				System.out.println("Nueva Posicion "+ghostX+" "+ghostY);
+				
+				
 //				for(boolean[] path : visited){
 //		            for(boolean a: path) {
 //		                if(a) { System.out.print("a "); } else { System.out.print("o "); }
@@ -143,7 +168,7 @@ public class Blinky extends Ghost {
 			int ghostX = (int) this.x;
 			int ghostY = (int) this.y-1;
 
-			up = Math.abs((pacX-ghostX))+Math.abs((pacY-ghostY));
+			up = Math.abs((pacX-ghostX)*(pacX-ghostX))+Math.abs((pacY-ghostY)*(pacY-ghostY));
 		} else {
 			up = Integer.MAX_VALUE;
 		}
@@ -152,7 +177,7 @@ public class Blinky extends Ghost {
 			int ghostX = (int) this.x;
 			int ghostY = (int) this.y+1;
 
-			down = Math.abs((pacX-ghostX))+Math.abs((pacY-ghostY));
+			down = Math.abs((pacX-ghostX)*(pacX-ghostX))+Math.abs((pacY-ghostY)*(pacY-ghostY));
 		} else {
 			down = Integer.MAX_VALUE;
 		}
@@ -161,7 +186,7 @@ public class Blinky extends Ghost {
 			int ghostX = (int) this.x+1;
 			int ghostY = (int) this.y;
 
-			right = Math.abs((pacX-ghostX))+Math.abs((pacY-ghostY));
+			right = Math.abs((pacX-ghostX)*(pacX-ghostX))+Math.abs((pacY-ghostY)*(pacY-ghostY));
 		} else {
 			right = Integer.MAX_VALUE;
 		}
@@ -170,17 +195,20 @@ public class Blinky extends Ghost {
 			int ghostX = (int) this.x-1;
 			int ghostY = (int) this.y;
 
-			left = Math.abs((pacX-ghostX))+Math.abs((pacY-ghostY));
+			left = Math.abs((pacX-ghostX)*(pacX-ghostX))+Math.abs((pacY-ghostY)*(pacY-ghostY));
 		} else {
 			left = Integer.MAX_VALUE;
 		}
 
 		int result = (Math.min((Math.min(up, down)), (Math.min(right, left))));
 
-		if( (result == up    && result == (down|right|left))	||
-			(result == down  && result == (up|right|left))		||
-			(result == right && result == (up|down|left))		||
-			(result == left  && result == (up|down|right)) ) {
+		System.out.println("Up " + moveUpAllowed() + " Right " + moveRightAllowed() + " Down " + moveDownAllowed() + " Left " + moveLeftAllowed());
+		System.out.println("Up " + up + " Right " + right + " Down " + down + " Left " + left + " result " + result);
+		
+		if( (result == up    && result == down	| result == right 	| result == left)	||
+			(result == down  && result == up	| result == right	| result == left)	||
+			(result == right && result == up	| result == down	| result == left)	||
+			(result == left  && result == up	| result == down	| result == right) ) {
 			if(moveUpAllowed()) {
 				this.currentDirection = DirectionEnum.UP;
 			} else if(moveLeftAllowed()) {
@@ -192,8 +220,6 @@ public class Blinky extends Ghost {
 			}
 		}
 
-		System.out.println("Up " + up + " Right " + right + " Down " + down + " Left " + left);
-
 		if(result == up) {
 			this.currentDirection = DirectionEnum.UP;
 		} else if(result == down) {
@@ -203,20 +229,27 @@ public class Blinky extends Ghost {
 		} else if(result == left) {
 			this.currentDirection = DirectionEnum.LEFT;
 		}
+		
+		up 		= 0;
+		down 	= 0;
+		right	= 0;
+		left 	= 0;
 
 	}
 	
 	private boolean isIntersection() {
-		if(((int)this.y) == (1|5|8|10|13|16|18|21|24) )
+		int aux = 0;
 		
-		if(moveUpAllowed() 		&& (moveDownAllowed()|moveLeftAllowed()|moveRightAllowed()))	return true;
-		if(moveRightAllowed()	&& (moveUpAllowed()|moveDownAllowed()|moveLeftAllowed()))		return true;
-		if(moveDownAllowed()	&& (moveUpAllowed()|moveRightAllowed()|moveLeftAllowed()))		return true;
-		if(moveLeftAllowed()	&& (moveUpAllowed()|moveRightAllowed()|moveDownAllowed()))		return true;	
+		if(moveUpAllowed())		aux++;
+		if(moveRightAllowed())	aux++;
+		if(moveDownAllowed())	aux++;
+		if(moveLeftAllowed())	aux++;
+		
+		if(aux >= 3) return true;
 		
 		return false;
+		
 	}
-
 
 	private void checkBetterDirectionOld(int pGhostY, int pGhostX, int pPacY, int pPacX, int pX, int pY) {
 		if(pY == 0 || pX == 0) {
@@ -462,7 +495,27 @@ public class Blinky extends Ghost {
 
 //			solution = Arrays.copyOf(visited, visited.length);
 
-			return Integer.min(dist, min_dist);
+			if (dist<min_dist) {
+				
+				mejorCamino = Arrays.copyOf(visited, visited.length);
+				min_dist = dist;
+				if (dist == 10) 
+					System.out.println("");
+				System.out.println ("Mejor camino "+min_dist);
+				for (int ii=0;ii<mejorCamino.length;ii++) {
+					for (int jj=0; jj<mejorCamino.length; jj++) {
+						if (mejorCamino[ii][jj]) System.out.print("V ");
+						else System.out.print("F ");
+	
+						mejorCamino[ii][jj]=false;
+					}
+					System.out.println("");
+				}
+				
+			}
+			
+			//return Integer.min(dist, min_dist);
+			return min_dist;
 		}
 
 		// establece (i, j) la celda como visitada
