@@ -2,6 +2,7 @@ package com.jpg.pacman.graphics.characters;
 
 import javax.swing.ImageIcon;
 
+import com.jpg.pacman.graphics.gameboard.Coordinate;
 import com.jpg.pacman.graphics.gameboard.GameBoard;
 
 public class Inky extends Ghost {
@@ -36,6 +37,18 @@ public class Inky extends Ghost {
 	protected void mover() {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	protected Coordinate findObjetive() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	protected void goOutCage() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

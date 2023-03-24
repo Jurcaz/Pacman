@@ -4,6 +4,7 @@ import java.awt.Image;
 
 import javax.swing.ImageIcon;
 
+import com.jpg.pacman.graphics.gameboard.Coordinate;
 import com.jpg.pacman.graphics.gameboard.GameBoard;
 import com.jpg.pacman.graphics.gameboard.MapElementEnum;
 
@@ -47,13 +48,17 @@ public abstract class Ghost extends Character implements Runnable {
 	}
 
 	protected abstract void mover ();
+	
+	protected abstract Coordinate findObjetive();
+	
+	protected abstract void goOutCage();
 
 	@Override
 	public void muevePosicionInicial () {
 		super.muevePosicionInicial();
 		this.currentDirection = DirectionEnum.UP;
 		this.out = 0;
-		outCage = false;
+		this.outCage = false;
 	}
 
 	@Override
@@ -142,27 +147,27 @@ public abstract class Ghost extends Character implements Runnable {
     			min_dist = dist;
 
     			try {
-    				downBoolean = visited[((int) this.getX())][((int) this.getY())+1];
+    				this.downBoolean = visited[((int) this.getX())][((int) this.getY())+1];
 				} catch (IndexOutOfBoundsException e) {
-					downBoolean = false;
+					this.downBoolean = false;
 				}
     			
     			try {
-    				upBoolean = visited[((int) this.getX())][((int) this.getY())-1];
+    				this.upBoolean = visited[((int) this.getX())][((int) this.getY())-1];
 				} catch (IndexOutOfBoundsException e) {
-					upBoolean = false;
+					this.upBoolean = false;
 				}
     			
     			try {
-    				rightBoolean = visited[((int) this.getX())+1][((int) this.getY())];
+    				this.rightBoolean = visited[((int) this.getX())+1][((int) this.getY())];
 				} catch (IndexOutOfBoundsException e) {
-					rightBoolean = false;
+					this.rightBoolean = false;
 				}
 
     			try {
-    				leftBoolean = visited[((int) this.getX())-1][((int) this.getY())];
+    				this.leftBoolean = visited[((int) this.getX())-1][((int) this.getY())];
 				} catch (IndexOutOfBoundsException e) {
-					leftBoolean = false;
+					this.leftBoolean = false;
 				}
     			
     		}
@@ -198,6 +203,17 @@ public abstract class Ghost extends Character implements Runnable {
        }
        return -1;
     }
-
-
+    
+    protected boolean isIntersection() {
+		int aux = 0;
+		
+		if(moveAllowed(this.x, this.y-1))		aux++;
+		if(moveAllowed(this.x+1, this.y))	aux++;
+		if(moveAllowed(this.x, this.y+1))	aux++;
+		if(moveAllowed(this.x-1, this.y))	aux++;
+		
+		if(aux >= 3) { return true; } else { return false; }
+		
+	}
+    
 }

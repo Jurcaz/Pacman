@@ -5,6 +5,7 @@ import javax.swing.ImageIcon;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.jpg.pacman.graphics.gameboard.Coordinate;
 import com.jpg.pacman.graphics.gameboard.GameBoard;
 import com.jpg.pacman.graphics.gameboard.MapElementEnum;
 
@@ -37,7 +38,6 @@ public class Blinky extends Ghost {
 			}
 
 			if(this.isOutCage()) {
-				findShortestPathLength(this.tablero.getMap(), ((int) this.getX()), ((int) this.getY()), ((int) this.tablero.getPacman().getX()), ((int) this.tablero.getPacman().getY()));
 				mover();
 			} else {
 				goOutCage();
@@ -62,20 +62,44 @@ public class Blinky extends Ghost {
 
 	@Override
 	protected void mover() {
-		if(rightBoolean) {
-			this.currentDirection = DirectionEnum.RIGHT;
-		}else if(downBoolean) {
-			this.currentDirection = DirectionEnum.DOWN;
-		}else if(leftBoolean) {
-			this.currentDirection = DirectionEnum.LEFT;
-		}else if(upBoolean) {
-			this.currentDirection = DirectionEnum.UP;
+		if(isIntersection()) {
+			findShortestPathLength(this.tablero.getMap(), ((int) this.getX()), ((int) this.getY()), ((int) findObjetive().getX()), ((int) findObjetive().getY()));
+			
+			if(rightBoolean) {
+				this.currentDirection = DirectionEnum.RIGHT;
+			}else if(downBoolean) {
+				this.currentDirection = DirectionEnum.DOWN;
+			}else if(leftBoolean) {
+				this.currentDirection = DirectionEnum.LEFT;
+			}else if(upBoolean) {
+				this.currentDirection = DirectionEnum.UP;
+			}
+			
+			go(this.currentDirection);
+		} else if(currentDirectionAllowed()){
+			go(this.currentDirection);
+		} else {
+			findShortestPathLength(this.tablero.getMap(), ((int) this.getX()), ((int) this.getY()), ((int) findObjetive().getX()), ((int) findObjetive().getY()));
+			
+			if(rightBoolean) {
+				this.currentDirection = DirectionEnum.RIGHT;
+			}else if(downBoolean) {
+				this.currentDirection = DirectionEnum.DOWN;
+			}else if(leftBoolean) {
+				this.currentDirection = DirectionEnum.LEFT;
+			}else if(upBoolean) {
+				this.currentDirection = DirectionEnum.UP;
+			}
 		}
 		
-		if(currentDirectionAllowed()) go(this.currentDirection);
+	}
+	
+	@Override
+	protected Coordinate findObjetive() {
+		return new Coordinate(this.tablero.getPacman().getX(), this.tablero.getPacman().getY());
 	}
 
-	private void goOutCage() {
+	protected void goOutCage() {
 		try {
 			this.currentDirection = wayOut[out];
 			go(this.currentDirection);

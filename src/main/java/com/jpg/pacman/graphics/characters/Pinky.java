@@ -5,6 +5,7 @@ import javax.swing.ImageIcon;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import com.jpg.pacman.graphics.gameboard.Coordinate;
 import com.jpg.pacman.graphics.gameboard.GameBoard;
 import com.jpg.pacman.graphics.gameboard.MapElementEnum;
 
@@ -12,6 +13,7 @@ public class Pinky extends Ghost {
 
 	//tiempo en milisegundos entre movimientos del fantasma
 	private int velocidadFantasma = 500;
+	private DirectionEnum[] wayOut = {DirectionEnum.UP,DirectionEnum.UP,DirectionEnum.UP};
 
 	private final static Logger logger = LogManager.getLogger (Pinky.class);
 
@@ -50,62 +52,61 @@ public class Pinky extends Ghost {
 			} catch (InterruptedException e) {
 				logger.error("Excepción en el sleep "+e.getMessage());
 			}
-			//mover();
-			//System.out.println("\nWEBOSSSSSSSSSSSSS\n");
+		
+			if(this.outCage) {
+				mover();
+			} else {
+				goOutCage();
+			}
+			
 		}
-
-
 	}
 
 	@Override
 	protected void mover() {
-		//se mueve a la siguiente posición en la misma dirección si está libre y si no gira
-		float xact = this.getX();
-		float yact = this.getY();
-
-		switch (this.currentDirection) {
-			case UP:
-				yact -=1;
-				break;
-			case DOWN:
-				yact +=1;
-				break;
-			case LEFT:
-				xact -=1;
-				break;
-			case RIGHT:
-				xact += 1;
-				break;
+		findShortestPathLength(this.tablero.getMap(), ((int) this.x), ((int) this.y), ((int) findObjetive().getX()), ((int) findObjetive().getY()));
+		
+		System.out.println("Up " + this.upBoolean + " Right " + this.rightBoolean + " Down " + this.downBoolean + " Left " + this.leftBoolean);
+		
+		if(this.rightBoolean) {
+			this.currentDirection = DirectionEnum.RIGHT;
+		}else if(this.downBoolean) {
+			this.currentDirection = DirectionEnum.DOWN;
+		}else if(this.leftBoolean) {
+			this.currentDirection = DirectionEnum.LEFT;
+		}else if(this.upBoolean) {
+			this.currentDirection = DirectionEnum.UP;
 		}
-		//comprueba si la nueva posición está dentro de los límites y es un hueco
-		if ((xact>=0 && xact<this.getMapa().TAM_MAPA) && (yact>=0 && yact<this.getMapa().TAM_MAPA) &&
-		((this.getMapa().getMap()[(int)yact][(int)xact]==MapElementEnum.PILL) ||
-		 (this.getMapa().getMap()[(int)yact][(int)xact]==MapElementEnum.SUPERPILL) ||
-		 (this.getMapa().getMap()[(int)yact][(int)xact]==MapElementEnum.GHOSTGATE) ||
-		 (this.getMapa().getMap()[(int)yact][(int)xact]==MapElementEnum.EMPTY))) {
-			this.setX(xact);
-			this.setY(yact);
-
-		 }
-		else {
-			int aleatorio = (int)(Math.random()*4);
-			logger.debug("Valor aleatorio "+aleatorio);
-			switch (aleatorio) {
-			case 0:
-				this.currentDirection = DirectionEnum.LEFT;
-				break;
-			case 1:
-				this.currentDirection = DirectionEnum.RIGHT;
-				break;
-			case 2:
-				this.currentDirection = DirectionEnum.DOWN;
-				break;
-			case 3:
-				this.currentDirection = DirectionEnum.UP;
-				break;
-		}
-
-		}
+		
+		if(currentDirectionAllowed()) go(currentDirection);
 		logger.debug("Pinky: x " + this.x + " y " + this.y);
+	}
+
+	@Override
+	protected Coordinate findObjetive() {
+		switch (this.tablero.getPacman().currentDirection) {
+			case UP:
+				return new Coordinate((this.tablero.getPacman().getX()-2), (this.tablero.getPacman().getY()-4));
+			case RIGHT:
+				return new Coordinate((this.tablero.getPacman().getX()+4), (this.tablero.getPacman().getY()));
+			case DOWN:
+				return new Coordinate((this.tablero.getPacman().getX()), (this.tablero.getPacman().getY()+4));
+			case LEFT:
+				return new Coordinate((this.tablero.getPacman().getX()-4), (this.tablero.getPacman().getY()));
+		}
+		
+		return null;
+	}
+
+	@Override
+	protected void goOutCage() {
+			try {
+				this.currentDirection = this.wayOut[out];
+				go(this.currentDirection);
+				out++;
+			} catch (IndexOutOfBoundsException e) {
+				this.outCage = true;
+			}
+		
 	}
 }
