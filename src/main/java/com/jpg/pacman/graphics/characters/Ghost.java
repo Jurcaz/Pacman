@@ -17,7 +17,7 @@ public abstract class Ghost extends Character implements Runnable {
 	protected boolean outCage = false;
 	protected boolean upBoolean, rightBoolean, downBoolean, leftBoolean;
 	protected int out;
-	protected int frightened = 0;
+	protected boolean frightened;
 
 	public Ghost(GameBoard gameBoard) {
 		super(gameBoard);
@@ -53,7 +53,7 @@ public abstract class Ghost extends Character implements Runnable {
 	
 	protected void frightened() {
 		
-		if(this.frightened == 0) {
+		if(this.frightened) {
 			if(this.currentDirection == DirectionEnum.RIGHT) {
 				this.currentDirection = DirectionEnum.LEFT;
 			}else if(this.currentDirection == DirectionEnum.DOWN) {
@@ -65,7 +65,28 @@ public abstract class Ghost extends Character implements Runnable {
 			}
 		}
 		
-		if(currentDirectionAllowed()) {
+		if(isIntersection()) {
+			switch ((int) (Math.random() * 4 ) + 1) {
+			case 1:
+				if(moveAllowed(this.x-1, this.y)) this.currentDirection = DirectionEnum.LEFT;
+				break;
+			case 2:
+				if(moveAllowed(this.x, this.y-1)) this.currentDirection = DirectionEnum.UP;	
+				break;
+			case 3:
+				if(moveAllowed(this.x+1, this.y)) this.currentDirection = DirectionEnum.RIGHT;
+				break;
+			case 4:
+				if(moveAllowed(this.x, this.y+1)) this.currentDirection = DirectionEnum.UP;
+				break;
+
+			default:
+				break;
+			}
+			
+			if(currentDirectionAllowed()) go(currentDirection);
+			
+		} else if (currentDirectionAllowed()) {
 			go(currentDirection);
 		} else {
 			switch ((int) (Math.random() * 4 ) + 1) {
@@ -85,9 +106,9 @@ public abstract class Ghost extends Character implements Runnable {
 			default:
 				break;
 			}
-			
 		}
-		this.frightened++;
+		
+		this.frightened = false;
 	}
 	
 	protected abstract Coordinate findObjetive();

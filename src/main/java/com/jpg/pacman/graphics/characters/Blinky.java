@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.jpg.pacman.graphics.gameboard.Coordinate;
 import com.jpg.pacman.graphics.gameboard.GameBoard;
-import com.jpg.pacman.graphics.gameboard.MapElementEnum;
 
 public class Blinky extends Ghost {
 
@@ -62,6 +61,7 @@ public class Blinky extends Ghost {
 		comestible = false;
 		activo = true;
 		velocidad = 1;
+		frightened = false;
 	}
 
 	@Override
@@ -95,7 +95,7 @@ public class Blinky extends Ghost {
 				this.currentDirection = DirectionEnum.UP;
 			}
 		}
-		this.frightened = 0;
+		this.frightened = true;
 		
 	}
 	

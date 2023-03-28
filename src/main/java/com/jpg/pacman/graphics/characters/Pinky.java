@@ -35,7 +35,7 @@ public class Pinky extends Ghost {
 		comestible = false;
 		activo = true;
 		velocidad =1;
-
+		frightened = false;
 	}
 
 	@Override
@@ -53,10 +53,14 @@ public class Pinky extends Ghost {
 				logger.error("Excepción en el sleep "+e.getMessage());
 			}
 		
-			if(this.outCage) {
-				chase();
+			if(isComestible()) {
+				frightened();
 			} else {
-				goOutCage();
+				if(outCage) {
+					chase();
+				} else {
+					goOutCage();
+				}
 			}
 			
 		}
@@ -64,21 +68,37 @@ public class Pinky extends Ghost {
 
 	@Override
 	protected void chase() {
-		findShortestPathLength(this.tablero.getMap(), ((int) this.x), ((int) this.y), ((int) findObjetive().getX()), ((int) findObjetive().getY()));
-		
-		System.out.println("Up " + this.upBoolean + " Right " + this.rightBoolean + " Down " + this.downBoolean + " Left " + this.leftBoolean);
-		
-		if(this.rightBoolean) {
-			this.currentDirection = DirectionEnum.RIGHT;
-		}else if(this.downBoolean) {
-			this.currentDirection = DirectionEnum.DOWN;
-		}else if(this.leftBoolean) {
-			this.currentDirection = DirectionEnum.LEFT;
-		}else if(this.upBoolean) {
-			this.currentDirection = DirectionEnum.UP;
+		if(isIntersection()) {
+			findShortestPathLength(this.tablero.getMap(), ((int) this.x), ((int) this.y), ((int) findObjetive().getX()), ((int) findObjetive().getY()));
+			
+			if(rightBoolean) {
+				this.currentDirection = DirectionEnum.RIGHT;
+			}else if(downBoolean) {
+				this.currentDirection = DirectionEnum.DOWN;
+			}else if(leftBoolean) {
+				this.currentDirection = DirectionEnum.LEFT;
+			}else if(upBoolean) {
+				this.currentDirection = DirectionEnum.UP;
+			}
+			
+			if(currentDirectionAllowed()) go(this.currentDirection);
+		} else if(currentDirectionAllowed()){
+			go(this.currentDirection);
+		} else {
+			findShortestPathLength(this.tablero.getMap(), ((int) this.x), ((int) this.y), ((int) findObjetive().getX()), ((int) findObjetive().getY()));
+			
+			if(rightBoolean) {
+				this.currentDirection = DirectionEnum.RIGHT;
+			}else if(downBoolean) {
+				this.currentDirection = DirectionEnum.DOWN;
+			}else if(leftBoolean) {
+				this.currentDirection = DirectionEnum.LEFT;
+			}else if(upBoolean) {
+				this.currentDirection = DirectionEnum.UP;
+			}
 		}
+		this.frightened = true;
 		
-		if(currentDirectionAllowed()) go(currentDirection);
 		logger.debug("Pinky: x " + this.x + " y " + this.y);
 	}
 
