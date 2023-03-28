@@ -37,7 +37,7 @@ public class Clyde extends Ghost {
 	}
 
 	@Override
-	protected void mover() {
+	protected void chase() {
 		// TODO Auto-generated method stub
 
 	}

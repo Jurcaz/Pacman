@@ -34,7 +34,7 @@ public class Inky extends Ghost {
 	}
 
 	@Override
-	protected void mover() {
+	protected void chase() {
 		// TODO Auto-generated method stub
 
 	}

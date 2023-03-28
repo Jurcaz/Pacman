@@ -54,7 +54,7 @@ public class Pinky extends Ghost {
 			}
 		
 			if(this.outCage) {
-				mover();
+				chase();
 			} else {
 				goOutCage();
 			}
@@ -63,7 +63,7 @@ public class Pinky extends Ghost {
 	}
 
 	@Override
-	protected void mover() {
+	protected void chase() {
 		findShortestPathLength(this.tablero.getMap(), ((int) this.x), ((int) this.y), ((int) findObjetive().getX()), ((int) findObjetive().getY()));
 		
 		System.out.println("Up " + this.upBoolean + " Right " + this.rightBoolean + " Down " + this.downBoolean + " Left " + this.leftBoolean);

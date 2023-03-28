@@ -36,11 +36,15 @@ public class Blinky extends Ghost {
 			} catch (InterruptedException e) {
 				logger.error("Excepción en el sleep "+e.getMessage());
 			}
-
-			if(this.isOutCage()) {
-				mover();
+			
+			if(isComestible()) {
+				frightened();
 			} else {
-				goOutCage();
+				if(this.isOutCage()) {
+					chase();
+				} else {
+					goOutCage();
+				}
 			}
 			
 		}
@@ -61,7 +65,7 @@ public class Blinky extends Ghost {
 	}
 
 	@Override
-	protected void mover() {
+	protected void chase() {
 		if(isIntersection()) {
 			findShortestPathLength(this.tablero.getMap(), ((int) this.getX()), ((int) this.getY()), ((int) findObjetive().getX()), ((int) findObjetive().getY()));
 			
@@ -91,6 +95,7 @@ public class Blinky extends Ghost {
 				this.currentDirection = DirectionEnum.UP;
 			}
 		}
+		this.frightened = 0;
 		
 	}
 	
