@@ -1,7 +1,6 @@
 package com.jpg.pacman.graphics.characters;
 
 import java.awt.Image;
-import java.util.Random;
 
 import javax.swing.ImageIcon;
 
@@ -50,9 +49,9 @@ public abstract class Ghost extends Character implements Runnable {
 	}
 
 	protected abstract void chase();
-	
+
 	protected void frightened() {
-		
+
 		if(this.frightened) {
 			if(this.currentDirection == DirectionEnum.RIGHT) {
 				this.currentDirection = DirectionEnum.LEFT;
@@ -64,14 +63,14 @@ public abstract class Ghost extends Character implements Runnable {
 				this.currentDirection = DirectionEnum.DOWN;
 			}
 		}
-		
+
 		if(isIntersection()) {
 			switch ((int) (Math.random() * 4 ) + 1) {
 			case 1:
 				if(moveAllowed(this.x-1, this.y)) this.currentDirection = DirectionEnum.LEFT;
 				break;
 			case 2:
-				if(moveAllowed(this.x, this.y-1)) this.currentDirection = DirectionEnum.UP;	
+				if(moveAllowed(this.x, this.y-1)) this.currentDirection = DirectionEnum.UP;
 				break;
 			case 3:
 				if(moveAllowed(this.x+1, this.y)) this.currentDirection = DirectionEnum.RIGHT;
@@ -83,9 +82,9 @@ public abstract class Ghost extends Character implements Runnable {
 			default:
 				break;
 			}
-			
+
 			if(currentDirectionAllowed()) go(currentDirection);
-			
+
 		} else if (currentDirectionAllowed()) {
 			go(currentDirection);
 		} else {
@@ -94,7 +93,7 @@ public abstract class Ghost extends Character implements Runnable {
 				if(moveAllowed(this.x-1, this.y)) this.currentDirection = DirectionEnum.LEFT;
 				break;
 			case 2:
-				if(moveAllowed(this.x, this.y-1)) this.currentDirection = DirectionEnum.UP;	
+				if(moveAllowed(this.x, this.y-1)) this.currentDirection = DirectionEnum.UP;
 				break;
 			case 3:
 				if(moveAllowed(this.x+1, this.y)) this.currentDirection = DirectionEnum.RIGHT;
@@ -107,12 +106,12 @@ public abstract class Ghost extends Character implements Runnable {
 				break;
 			}
 		}
-		
+
 		this.frightened = false;
 	}
-	
+
 	protected abstract Coordinate findObjetive();
-	
+
 	protected abstract void goOutCage();
 
 	@Override
@@ -171,7 +170,7 @@ public abstract class Ghost extends Character implements Runnable {
 			break;
 		}
 	}
-	
+
 	protected boolean currentDirectionAllowed() {
 		switch (this.currentDirection) {
 		case UP:
@@ -186,7 +185,7 @@ public abstract class Ghost extends Character implements Runnable {
 			return false;
 		}
 	}
-	
+
 	protected boolean moveAllowed(float pXact, float pYact) {
 		if((pXact>=0 && pXact<this.getMapa().TAM_MAPA) && (pYact>=0 && pYact<this.getMapa().TAM_MAPA) &&
 				((this.getMapa().getMap()[(int)pYact][(int)pXact]==MapElementEnum.PILL) ||
@@ -197,7 +196,7 @@ public abstract class Ghost extends Character implements Runnable {
 			return false;
 		}
 	}
-	
+
 	protected boolean isSafe(boolean[][] visited, int x, int y) {
         return moveAllowed(x, y) && !visited[x][y];
     }
@@ -213,13 +212,13 @@ public abstract class Ghost extends Character implements Runnable {
 				} catch (IndexOutOfBoundsException e) {
 					this.downBoolean = false;
 				}
-    			
+
     			try {
     				this.upBoolean = visited[((int) this.getX())][((int) this.getY())-1];
 				} catch (IndexOutOfBoundsException e) {
 					this.upBoolean = false;
 				}
-    			
+
     			try {
     				this.rightBoolean = visited[((int) this.getX())+1][((int) this.getY())];
 				} catch (IndexOutOfBoundsException e) {
@@ -231,7 +230,7 @@ public abstract class Ghost extends Character implements Runnable {
 				} catch (IndexOutOfBoundsException e) {
 					this.leftBoolean = false;
 				}
-    			
+
     		}
 
     		return min_dist;
@@ -265,17 +264,17 @@ public abstract class Ghost extends Character implements Runnable {
        }
        return -1;
     }
-    
+
     protected boolean isIntersection() {
 		int aux = 0;
-		
+
 		if(moveAllowed(this.x, this.y-1))	aux++;
 		if(moveAllowed(this.x+1, this.y))	aux++;
 		if(moveAllowed(this.x, this.y+1))	aux++;
 		if(moveAllowed(this.x-1, this.y))	aux++;
-		
+
 		if(aux >= 3) { return true; } else { return false; }
-		
+
 	}
-    
+
 }

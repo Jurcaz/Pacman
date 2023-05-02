@@ -1,10 +1,10 @@
 package com.jpg.pacman.graphics.gameboard;
 
 public class Coordinate {
-	
+
 	private float x;
 	private float y;
-	
+
 	public Coordinate(float pX, float pY) {
 		this.x = pX;
 		this.y = pY;
@@ -13,7 +13,7 @@ public class Coordinate {
 	public void setY(float y) {
 		this.y = y;
 	}
-	
+
 	public void setX(float x) {
 		this.x = x;
 	}
@@ -24,6 +24,6 @@ public class Coordinate {
 
 	public float getX() {
 		return x;
-	}	
+	}
 
 }

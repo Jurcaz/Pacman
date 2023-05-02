@@ -13,7 +13,7 @@ public class Blinky extends Ghost {
 	//tiempo en milisegundos entre movimientos del fantasma
 	private int velocidadFantasma = 500;
 	private DirectionEnum[] wayOut = {DirectionEnum.UP,DirectionEnum.RIGHT,DirectionEnum.UP,DirectionEnum.UP,DirectionEnum.LEFT};
-	
+
 	private final static Logger logger = LogManager.getLogger (Blinky.class);
 
 	/*  Rojo
@@ -35,7 +35,7 @@ public class Blinky extends Ghost {
 			} catch (InterruptedException e) {
 				logger.error("Excepción en el sleep "+e.getMessage());
 			}
-			
+
 //			if(isComestible()) {
 //				frightened();
 //			} else {
@@ -45,7 +45,7 @@ public class Blinky extends Ghost {
 //					goOutCage();
 //				}
 //			}
-			
+
 		}
 	}
 
@@ -68,7 +68,7 @@ public class Blinky extends Ghost {
 	protected void chase() {
 		if(isIntersection()) {
 			findShortestPathLength(this.tablero.getMap(), ((int) this.getX()), ((int) this.getY()), ((int) findObjetive().getX()), ((int) findObjetive().getY()));
-			
+
 			if(rightBoolean) {
 				this.currentDirection = DirectionEnum.RIGHT;
 			}else if(downBoolean) {
@@ -78,13 +78,13 @@ public class Blinky extends Ghost {
 			}else if(upBoolean) {
 				this.currentDirection = DirectionEnum.UP;
 			}
-			
+
 			go(this.currentDirection);
 		} else if(currentDirectionAllowed()){
 			go(this.currentDirection);
 		} else {
 			findShortestPathLength(this.tablero.getMap(), ((int) this.getX()), ((int) this.getY()), ((int) findObjetive().getX()), ((int) findObjetive().getY()));
-			
+
 			if(rightBoolean) {
 				this.currentDirection = DirectionEnum.RIGHT;
 			}else if(downBoolean) {
@@ -96,14 +96,15 @@ public class Blinky extends Ghost {
 			}
 		}
 		this.frightened = true;
-		
+
 	}
-	
+
 	@Override
 	protected Coordinate findObjetive() {
 		return new Coordinate(this.tablero.getPacman().getX(), this.tablero.getPacman().getY());
 	}
 
+	@Override
 	protected void goOutCage() {
 		try {
 			this.currentDirection = wayOut[out];

@@ -12,12 +12,12 @@ public class Inky extends Ghost {
 
 	private int velocidadFantasma = 500;
 	private DirectionEnum[] wayOut = {DirectionEnum.UP,DirectionEnum.UP,DirectionEnum.UP};
-	
+
 	/* Azul
 	 * No es tan rápido como Blinky. Calcula la distancia en línea recta entre Blinky y Pac-man y
 	 * lo gira 180 grados, así que Inky siempre colabora con Blinky para acorralar a Pac-man
 	 * */
-	
+
 	private final static Logger logger = LogManager.getLogger (Inky.class);
 
 
@@ -38,7 +38,7 @@ public class Inky extends Ghost {
 
 	@Override
 	public void run() {
-		
+
 		while (!this.getMapa().isPartidaAcabada()) {
 			//vuelve a su posición de inicio
 			if (this.getMapa().isReiniciarPosiciones()) {
@@ -50,20 +50,17 @@ public class Inky extends Ghost {
 			} catch (InterruptedException e) {
 				logger.error("Excepción en el sleep "+e.getMessage());
 			}
-		
-			if(isComestible()) {
-				frightened();
-			} else {
-				if(outCage) {
-					//System.out.println("x " + findObjetive().getX() + " y " + findObjetive().getY());
-					findObjetive();
-					//chase();
-					
-				} else {
-					goOutCage();
-				}
-			}
-			
+
+//			if(isComestible()) {
+//				frightened();
+//			} else {
+//				if(outCage) {
+//					chase();
+//				} else {
+//					goOutCage();
+//				}
+//			}
+
 		}
 
 	}
@@ -72,7 +69,7 @@ public class Inky extends Ghost {
 	protected void chase() {
 		if(isIntersection()) {
 			findShortestPathLength(this.tablero.getMap(), ((int) this.x), ((int) this.y), ((int) findObjetive().getX()), ((int) findObjetive().getY()));
-			
+
 			if(rightBoolean) {
 				this.currentDirection = DirectionEnum.RIGHT;
 			}else if(downBoolean) {
@@ -82,13 +79,13 @@ public class Inky extends Ghost {
 			}else if(upBoolean) {
 				this.currentDirection = DirectionEnum.UP;
 			}
-			
+
 			if(currentDirectionAllowed()) go(this.currentDirection);
 		} else if(currentDirectionAllowed()){
 			go(this.currentDirection);
 		} else {
 			findShortestPathLength(this.tablero.getMap(), ((int) this.x), ((int) this.y), ((int) findObjetive().getX()), ((int) findObjetive().getY()));
-			
+
 			if(rightBoolean) {
 				this.currentDirection = DirectionEnum.RIGHT;
 			}else if(downBoolean) {
@@ -100,59 +97,48 @@ public class Inky extends Ghost {
 			}
 		}
 		this.frightened = true;
-		
-		logger.debug("Pinky: x " + this.x + " y " + this.y);
 	}
 
 	@Override
 	protected Coordinate findObjetive() {
-		
+
 			int pacX = (int) tablero.getPacman().getX();
 			int pacY = (int) tablero.getPacman().getY();
-			
+
 			int blinkyX = (int) tablero.getBlinky().getX();
 			int blinkyY = (int) tablero.getBlinky().getY();
-			
-			int distantX = Math.abs((pacX - blinkyX));
-			int distantY = Math.abs((pacY - blinkyY));
-			
-			if(pacX < blinkyX) distantX = distantX * -1;
-			
-			if(pacY < blinkyY) distantY = distantY * -1;
-			
+
+			int distantX = (pacX - blinkyX);
+			int distantY = (pacY - blinkyY);
+
 			int objetiveX = pacX + distantX;
 			int objetiveY = pacY + distantY;
 			
-			while (!moveAllowed(objetiveX, objetiveY)) {
+			if(objetiveX > 27) { objetiveX = 27; } else if ( objetiveX < 0 ) { objetiveX = 0; }
+			if(objetiveY > 27) { objetiveY = 27; } else if ( objetiveY < 0 ) { objetiveY = 0; }
+
+			while(!moveAllowed(objetiveX, objetiveY)) {
 				
-				if(distantX == 0) {
-					System.out.println("distantx 0");
-					if(pacY > distantY) {
-						distantY = distantY + 1;
-					} else {
-						distantY = distantY - 1;
-					}
+				if( pacY > objetiveY ) {
+					objetiveY = objetiveY + 1;
+				} else {
+					objetiveY = objetiveY - 1;
 				}
 				
-				if(distantY == 0) {
-					System.out.println("distanty 0");
-					if(pacX > distantX) {
-						distantX = distantX + 1;
-					} else {
-						distantX = distantX - 1;
-					}
+				if( pacX > objetiveX ) {
+					objetiveX = objetiveX + 1;
+				} else {
+					objetiveX = objetiveX - 1;
 				}
-					
-				
 				
 			}
-			
+
 //			System.out.println("pacX " + pacX + " pacY " + pacY);
 //			System.out.println("blinkyX " + blinkyX + " blinkyY " + blinkyY);
 //			System.out.println("distantX " + distantX + " distantY " + distantY);
-			System.out.println("objetiveX "+ objetiveX + " objetiveY " + objetiveY);
+//			System.out.println("objetiveX "+ objetiveX + " objetiveY " + objetiveY);
 //			System.out.println("-----------------------------------");
-						
+
 		return new Coordinate(objetiveX, objetiveY);
 	}
 
@@ -165,7 +151,7 @@ public class Inky extends Ghost {
 		} catch (IndexOutOfBoundsException e) {
 			this.outCage = true;
 		}
-		
+
 	}
 
 }

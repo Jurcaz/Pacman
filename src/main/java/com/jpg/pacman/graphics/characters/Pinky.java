@@ -7,7 +7,6 @@ import org.apache.logging.log4j.Logger;
 
 import com.jpg.pacman.graphics.gameboard.Coordinate;
 import com.jpg.pacman.graphics.gameboard.GameBoard;
-import com.jpg.pacman.graphics.gameboard.MapElementEnum;
 
 public class Pinky extends Ghost {
 
@@ -52,19 +51,19 @@ public class Pinky extends Ghost {
 			} catch (InterruptedException e) {
 				logger.error("Excepción en el sleep "+e.getMessage());
 			}
-		
+
 //			if(isComestible()) {
 //				frightened();
 //			} else {
 //				if(outCage) {
 //					System.out.println("x " + findObjetive().getX() + " y " + findObjetive().getY());
 //					chase();
-//					
+//
 //				} else {
 //					goOutCage();
 //				}
 //			}
-			
+
 		}
 	}
 
@@ -72,7 +71,7 @@ public class Pinky extends Ghost {
 	protected void chase() {
 		if(isIntersection()) {
 			findShortestPathLength(this.tablero.getMap(), ((int) this.x), ((int) this.y), ((int) findObjetive().getX()), ((int) findObjetive().getY()));
-			
+
 			if(rightBoolean) {
 				this.currentDirection = DirectionEnum.RIGHT;
 			}else if(downBoolean) {
@@ -82,13 +81,13 @@ public class Pinky extends Ghost {
 			}else if(upBoolean) {
 				this.currentDirection = DirectionEnum.UP;
 			}
-			
+
 			if(currentDirectionAllowed()) go(this.currentDirection);
 		} else if(currentDirectionAllowed()){
 			go(this.currentDirection);
 		} else {
 			findShortestPathLength(this.tablero.getMap(), ((int) this.x), ((int) this.y), ((int) findObjetive().getX()), ((int) findObjetive().getY()));
-			
+
 			if(rightBoolean) {
 				this.currentDirection = DirectionEnum.RIGHT;
 			}else if(downBoolean) {
@@ -100,54 +99,52 @@ public class Pinky extends Ghost {
 			}
 		}
 		this.frightened = true;
-		
-		logger.debug("Pinky: x " + this.x + " y " + this.y);
 	}
 
 	@Override
 	protected Coordinate findObjetive() {
 		int auxX = (int) this.tablero.getPacman().getX();
 		int auxY = (int) this.tablero.getPacman().getY();
-		
+
 		switch (this.tablero.getPacman().currentDirection) {
 			case UP:
 				auxY = auxY - 4;
 				auxX = auxX - 2;
-				
+
 				while (!(moveAllowed(auxX, auxY))) {
 					auxX = auxX + 1;
 				}
-				
+
 				if(moveAllowed(auxX,auxY)) return new Coordinate(auxX, auxY);
-				
+
 				while(!(moveAllowed(auxX, auxY))) {
 					auxY = auxY + 1;
 				}
-				
+
 				if(moveAllowed(auxX,auxY)) return new Coordinate(auxX, auxY);
-				
+
 			case RIGHT:
 				auxX = auxX + 4;
 				while(!(moveAllowed(auxX, auxY))) {
 					auxX = auxX - 1;
 				}
-				
+
 				if(moveAllowed(auxX,auxY)) return new Coordinate(auxX, auxY);
-				
+
 			case DOWN:
 				auxY = auxY + 4;
 				while (!(moveAllowed(auxX,auxY))) {
 					auxY = auxY - 1;
 				}
-				
+
 				if(moveAllowed(auxX,auxY)) return new Coordinate(auxX, auxY);
-				
+
 			case LEFT:
 				auxX = auxX -4;
 				while(!(moveAllowed(auxX, auxY))) {
 					auxX = auxX + 1;
 				}
-				
+
 				if(moveAllowed(auxX,auxY)) return new Coordinate(auxX, auxY);
 		}
 		return null;
@@ -162,6 +159,6 @@ public class Pinky extends Ghost {
 			} catch (IndexOutOfBoundsException e) {
 				this.outCage = true;
 			}
-		
+
 	}
 }
