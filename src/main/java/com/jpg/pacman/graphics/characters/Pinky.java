@@ -104,17 +104,35 @@ public class Pinky extends Ghost {
 
 	@Override
 	protected Coordinate findObjetive() {
+		float auxX = this.tablero.getPacman().getX();
+		float auxY = this.tablero.getPacman().getY();
+		
 		switch (this.tablero.getPacman().currentDirection) {
 			case UP:
-				return new Coordinate((this.tablero.getPacman().getX()-2), (this.tablero.getPacman().getY()-4));
+				auxY = auxY - 4;
+				while(!(moveAllowed(auxX, auxY))) {
+					auxY = auxY + 1;
+				}
+				return new Coordinate(auxX, auxY);
 			case RIGHT:
-				return new Coordinate((this.tablero.getPacman().getX()+4), (this.tablero.getPacman().getY()));
+				auxX = auxX + 4;
+				while(!(moveAllowed(auxX, auxY))) {
+					auxX = auxX - 1;
+				}
+				return new Coordinate(auxX, auxY);
 			case DOWN:
-				return new Coordinate((this.tablero.getPacman().getX()), (this.tablero.getPacman().getY()+4));
+				auxY = auxY + 4;
+				while (!(moveAllowed(auxX,auxY))) {
+					auxY = auxY - 1;
+				}
+				return new Coordinate(auxX, auxY);
 			case LEFT:
-				return new Coordinate((this.tablero.getPacman().getX()-4), (this.tablero.getPacman().getY()));
+				auxX = auxX -4;
+				while(!(moveAllowed(auxX, auxY))) {
+					auxX = auxX + 1;
+				}
+				return new Coordinate(auxX, auxY);
 		}
-		
 		return null;
 	}
 

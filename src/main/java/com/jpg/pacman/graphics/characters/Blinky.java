@@ -16,7 +16,7 @@ public class Blinky extends Ghost {
 	
 	private final static Logger logger = LogManager.getLogger (Blinky.class);
 
-	/*
+	/*  Rojo
 	 *  Después de que Pac-Man coma cierta cantidad de puntos, su velocidad incrementa considerablemente
 	 *  (este número disminuye en niveles más altos). Blinky persigue a Pac-man directamente.
 	 * **/
@@ -36,15 +36,15 @@ public class Blinky extends Ghost {
 				logger.error("Excepción en el sleep "+e.getMessage());
 			}
 			
-			if(isComestible()) {
-				frightened();
-			} else {
-				if(this.isOutCage()) {
-					chase();
-				} else {
-					goOutCage();
-				}
-			}
+//			if(isComestible()) {
+//				frightened();
+//			} else {
+//				if(this.isOutCage()) {
+//					chase();
+//				} else {
+//					goOutCage();
+//				}
+//			}
 			
 		}
 	}
