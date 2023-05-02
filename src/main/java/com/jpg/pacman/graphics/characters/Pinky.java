@@ -53,15 +53,17 @@ public class Pinky extends Ghost {
 				logger.error("Excepción en el sleep "+e.getMessage());
 			}
 		
-			if(isComestible()) {
-				frightened();
-			} else {
-				if(outCage) {
-					chase();
-				} else {
-					goOutCage();
-				}
-			}
+//			if(isComestible()) {
+//				frightened();
+//			} else {
+//				if(outCage) {
+//					System.out.println("x " + findObjetive().getX() + " y " + findObjetive().getY());
+//					chase();
+//					
+//				} else {
+//					goOutCage();
+//				}
+//			}
 			
 		}
 	}
@@ -104,34 +106,49 @@ public class Pinky extends Ghost {
 
 	@Override
 	protected Coordinate findObjetive() {
-		float auxX = this.tablero.getPacman().getX();
-		float auxY = this.tablero.getPacman().getY();
+		int auxX = (int) this.tablero.getPacman().getX();
+		int auxY = (int) this.tablero.getPacman().getY();
 		
 		switch (this.tablero.getPacman().currentDirection) {
 			case UP:
 				auxY = auxY - 4;
+				auxX = auxX - 2;
+				
+				while (!(moveAllowed(auxX, auxY))) {
+					auxX = auxX + 1;
+				}
+				
+				if(moveAllowed(auxX,auxY)) return new Coordinate(auxX, auxY);
+				
 				while(!(moveAllowed(auxX, auxY))) {
 					auxY = auxY + 1;
 				}
-				return new Coordinate(auxX, auxY);
+				
+				if(moveAllowed(auxX,auxY)) return new Coordinate(auxX, auxY);
+				
 			case RIGHT:
 				auxX = auxX + 4;
 				while(!(moveAllowed(auxX, auxY))) {
 					auxX = auxX - 1;
 				}
-				return new Coordinate(auxX, auxY);
+				
+				if(moveAllowed(auxX,auxY)) return new Coordinate(auxX, auxY);
+				
 			case DOWN:
 				auxY = auxY + 4;
 				while (!(moveAllowed(auxX,auxY))) {
 					auxY = auxY - 1;
 				}
-				return new Coordinate(auxX, auxY);
+				
+				if(moveAllowed(auxX,auxY)) return new Coordinate(auxX, auxY);
+				
 			case LEFT:
 				auxX = auxX -4;
 				while(!(moveAllowed(auxX, auxY))) {
 					auxX = auxX + 1;
 				}
-				return new Coordinate(auxX, auxY);
+				
+				if(moveAllowed(auxX,auxY)) return new Coordinate(auxX, auxY);
 		}
 		return null;
 	}

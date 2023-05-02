@@ -473,4 +473,8 @@ public class GameBoard extends JPanel implements ActionListener {
 		public Pacman getPacman() {
 			return pacman;
 		}
+		
+		public Ghost getBlinky() {
+			return blinky;
+		}
 }
