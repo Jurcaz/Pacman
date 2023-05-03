@@ -56,7 +56,12 @@ public class Clyde extends Ghost {
 				frightened();
 			} else {
 				if(outCage) {findObjetive();
-					chase();
+					if(toClose()) {
+						frightened();
+					} else {
+						chase();
+					}
+				
 				} else {
 					goOutCage();
 				}
@@ -87,6 +92,13 @@ public class Clyde extends Ghost {
 			this.outCage = true;
 		}
 
+	}
+	
+	private boolean toClose() {
+		if( (findObjetive().getX() - this.x) <= 8 || (findObjetive().getY() - this.y) <= 8 ) return true;
+		
+		return false;
+		
 	}
 
 }
