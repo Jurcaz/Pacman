@@ -52,20 +52,20 @@ public class Clyde extends Ghost {
 				logger.error("Excepción en el sleep "+e.getMessage());
 			}
 
-			if(isComestible()) {
-				frightened();
-			} else {
-				if(outCage) {findObjetive();
-					if(toClose()) {
-						frightened();
-					} else {
-						chase();
-					}
-				
-				} else {
-					goOutCage();
-				}
-			}
+//			if(isComestible()) {
+//				frightened();
+//			} else {
+//				if(outCage) {findObjetive();
+//					if(toClose()) {
+//						frightened();
+//					} else {
+//						chase();
+//					}
+//				
+//				} else {
+//					goOutCage();
+//				}
+//			}
 
 		}
 
@@ -73,7 +73,38 @@ public class Clyde extends Ghost {
 
 	@Override
 	protected void chase() {
-		// TODO Auto-generated method stub
+		if(toClose()) {
+			frightened();
+		} else if(isIntersection()) {
+			findShortestPathLength(this.tablero.getMap(), ((int) this.getX()), ((int) this.getY()), ((int) findObjetive().getX()), ((int) findObjetive().getY()));
+
+			if(rightBoolean) {
+				this.currentDirection = DirectionEnum.RIGHT;
+			}else if(downBoolean) {
+				this.currentDirection = DirectionEnum.DOWN;
+			}else if(leftBoolean) {
+				this.currentDirection = DirectionEnum.LEFT;
+			}else if(upBoolean) {
+				this.currentDirection = DirectionEnum.UP;
+			}
+
+			go(this.currentDirection);
+		} else if(currentDirectionAllowed()){
+			go(this.currentDirection);
+		} else {
+			findShortestPathLength(this.tablero.getMap(), ((int) this.getX()), ((int) this.getY()), ((int) findObjetive().getX()), ((int) findObjetive().getY()));
+
+			if(rightBoolean) {
+				this.currentDirection = DirectionEnum.RIGHT;
+			}else if(downBoolean) {
+				this.currentDirection = DirectionEnum.DOWN;
+			}else if(leftBoolean) {
+				this.currentDirection = DirectionEnum.LEFT;
+			}else if(upBoolean) {
+				this.currentDirection = DirectionEnum.UP;
+			}
+		}
+		this.frightened = true;
 
 	}
 
